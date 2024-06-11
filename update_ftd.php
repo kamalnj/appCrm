@@ -7,123 +7,53 @@ if (!in_array($_SESSION['role'], ['super_admin', 'order_admin', 'ftd_admin'])) {
 
 include('config.php');
 
-// Check if form is submitted and fid is set
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd']) && isset($_POST['ftd_id'])) {
-    $fid = $_POST['ftd_id'];
-
-    // Fetch the FTD record from the database based on fid
-    $result = mysqli_query($conn, "SELECT * FROM ftd WHERE fid='$fid'");
-    $ftd = mysqli_fetch_assoc($result);
-}
-
-// Handle Update Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd_submit'])) {
-    $fid = $_POST['ftd_id'];
-    $updated_fields = array();
+    $fid = $_POST['fid'];
+    $email = $_POST['email'];
+    $email_password = $_POST['email_password'];
+    $extension = $_POST['extension'];
+    $phone_number = $_POST['phone_number'];
+    $whatsapp = $_POST['whatsapp'];
+    $viber = $_POST['viber'];
+    $messenger = $_POST['messenger'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+    $country = $_POST['country'];
+    $date_created = $_POST['date_created'];
+    $front_id = $_POST['front_id'];
+    $back_id = $_POST['back_id'];
+    $selfie_front = $_POST['selfie_front'];
+    $selfie_back = $_POST['selfie_back'];
+    $remark = $_POST['remark'];
+    $profile_picture = $_POST['profile_picture'];
+    $our_network = $_POST['our_network'];
+    $client_network = $_POST['client_network'];
+    $broker = $_POST['broker'];
 
-    // Check which fields are being updated and add them to the $updated_fields array
-    if (isset($_POST['email'])) {
-        $email = $_POST['email'];
-        $updated_fields[] = "email='$email'";
-    }
-    if (isset($_POST['email_password'])) {
-        $email_password = $_POST['email_password'];
-        $updated_fields[] = "email_password='$email_password'";
-    }
-    if (isset($_POST['extension'])) {
-        $extension = $_POST['extension'];
-        $updated_fields[] = "extension='$extension'";
-    }
-    if (isset($_POST['phone_number'])) {
-        $phone_number = $_POST['phone_number'];
-        $updated_fields[] = "phone_number='$phone_number'";
-    }
-    if (isset($_POST['whatsapp'])) {
-        $whatsapp = $_POST['whatsapp'];
-        $updated_fields[] = "whatsapp='$whatsapp'";
-    }
-    if (isset($_POST['viber'])) {
-        $viber = $_POST['viber'];
-        $updated_fields[] = "viber='$viber'";
-    }
-    if (isset($_POST['messenger'])) {
-        $messenger = $_POST['messenger'];
-        $updated_fields[] = "messenger='$messenger'";
-    }
-    if (isset($_POST['dob'])) {
-        $dob = $_POST['dob'];
-        $updated_fields[] = "dob='$dob'";
-    }
-    if (isset($_POST['address'])) {
-        $address = $_POST['address'];
-        $updated_fields[] = "address='$address'";
-    }
-    if (isset($_POST['country'])) {
-        $country = $_POST['country'];
-        $updated_fields[] = "country='$country'";
-    }
-    if (isset($_POST['date_created'])) {
-        $date_created = $_POST['date_created'];
-        $updated_fields[] = "date_created='$date_created'";
-    }
-    if (isset($_POST['front_id'])) {
-        $front_id = $_POST['front_id'];
-        $updated_fields[] = "front_id='$front_id'";
-    }
-    if (isset($_POST['back_id'])) {
-        $back_id = $_POST['back_id'];
-        $updated_fields[] = "back_id='$back_id'";
-    }
-    if (isset($_POST['selfie_front'])) {
-        $selfie_front = $_POST['selfie_front'];
-        $updated_fields[] = "selfie_front='$selfie_front'";
-    }
-    if (isset($_POST['selfie_back'])) {
-        $selfie_back = $_POST['selfie_back'];
-        $updated_fields[] = "selfie_back='$selfie_back'";
-    }
-    if (isset($_POST['remark'])) {
-        $remark = $_POST['remark'];
-        $updated_fields[] = "remark='$remark'";
-    }
-    if (isset($_POST['profile_picture'])) {
-        $profile_picture = $_POST['profile_picture'];
-        $updated_fields[] = "profile_picture='$profile_picture'";
-    }
-    if (isset($_POST['our_network'])) {
-        $our_network = $_POST['our_network'];
-        $updated_fields[] = "our_network='$our_network'";
-    }
-    if (isset($_POST['client_network'])) {
-        $client_network = $_POST['client_network'];
-        $updated_fields[] = "client_network='$client_network'";
-    }
-    if (isset($_POST['broker'])) {
-        $broker = $_POST['broker'];
-        $updated_fields[] = "broker='$broker'";
-    }
-
-    // Construct the update query with the updated fields
-    if (!empty($updated_fields)) {
-        $update_query = "UPDATE ftd SET " . implode(', ', $updated_fields) . " WHERE fid='$fid'";
-        mysqli_query($conn, $update_query);
-        header("Location: manage_ftd.php");
-        exit();
-    }
+    $sql = "UPDATE ftd SET email=?, email_password=?, extension=?, phone_number=?, whatsapp=?, viber=?, messenger=?, dob=?, address=?, country=?, date_created=?, front_id=?, back_id=?, selfie_front=?, selfie_back=?, remark=?, profile_picture=?, our_network=?, client_network=?, broker=? WHERE fid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssssssssssssssssss", $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker, $fid);
+    $stmt->execute();
+    header("Location: manage_ftd.php");
 }
+
+$fid = $_GET['id'];
+$ftd_result = mysqli_query($conn, "SELECT * FROM ftd WHERE fid='$fid'");
+$ftd = mysqli_fetch_assoc($ftd_result);
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update FTD</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 py-8 px-4">
-    <div class="max-w-2xl mx-auto bg-white p-8 rounded-md shadow-md">
-        <h1 class="text-2xl font-bold mb-4">Update FTD</h1>
+<body class="bg-gray-100">
+    <div class="container px-6 mx-auto py-8">
+        <h1 class="text-3xl text-center font-bold mb-4">Update FTD</h1>
         <form method="post" class="space-y-4">
-            <input type="hidden" name="ftd_id" value="<?php echo $ftd['fid']; ?>">
-
+            <input type="hidden" name="fid" value="<?php echo $ftd['fid']; ?>">
             <label for="email" class="block">Email:</label>
             <input type="email" id="email" name="email" value="<?php echo $ftd['email']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
@@ -154,17 +84,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd_submit'])) 
                 <option value="No" <?php if ($ftd['messenger'] == 'No') echo 'selected'; ?>>No</option>
             </select>
 
-            <label for="dob" class="block">Date of Birth:</label>
+            <label for="dob" class="block">DOB:</label>
             <input type="date" id="dob" name="dob" value="<?php echo $ftd['dob']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="address" class="block">Address:</label>
-            <input type="text" id="address" name="address" value="<?php echo $ftd['address']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <textarea id="address" name="address" rows="3" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"><?php echo $ftd['address']; ?></textarea>
 
             <label for="country" class="block">Country:</label>
             <input type="text" id="country" name="country" value="<?php echo $ftd['country']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="date_created" class="block">Date Created:</label>
-            <input type="text" id="date_created" name="date_created" value="<?php echo $ftd['date_created']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <input type="date" id="date_created" name="date_created" value="<?php echo $ftd['date_created']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="front_id" class="block">Front ID:</label>
             <input type="text" id="front_id" name="front_id" value="<?php echo $ftd['front_id']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
@@ -179,25 +109,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd_submit'])) 
             <input type="text" id="selfie_back" name="selfie_back" value="<?php echo $ftd['selfie_back']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="remark" class="block">Remark:</label>
-            <textarea id="remark" name="remark" class="border border-gray-300 rounded-md px-3 py-2 focus
-focus
-focus
-focus
-"><?php echo $ftd['remark']; ?></textarea>
-<label for="profile_picture" class="block">Profile Picture:</label>
-        <input type="text" id="profile_picture" name="profile_picture" value="<?php echo $ftd['profile_picture']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <textarea id="remark" name="remark" rows="3" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"><?php echo $ftd['remark']; ?></textarea>
 
-        <label for="our_network" class="block">Our Network:</label>
-        <input type="text" id="our_network" name="our_network" value="<?php echo $ftd['our_network']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <label for="profile_picture" class="block">Profile Picture:</label>
+            <input type="text" id="profile_picture" name="profile_picture" value="<?php echo $ftd['profile_picture']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
-        <label for="client_network" class="block">Client Network:</label>
-        <input type="text" id="client_network" name="client_network" value="<?php echo $ftd['client_network']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <label for="our_network" class="block">Our Network:</label>
+            <input type="text" id="our_network" name="our_network" value="<?php echo $ftd['our_network']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
-        <label for="broker" class="block">Broker:</label>
-        <input type="text" id="broker" name="broker" value="<?php echo $ftd['broker']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+            <label for="client_network" class="block">Client Network:</label>
+            <input type="text" id="client_network" name="client_network" value="<?php echo $ftd['client_network']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
-        <button type="submit" name="update_ftd_submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md">Update FTD</button>
-    </form>
-    <a href="manage_ftd.php" class="block mt-4 text-indigo-600 hover:text-indigo-700">Cancel</a>
-</div>
+            <label for="broker" class="block">Broker:</label>
+            <input type="text" id="broker" name="broker" value="<?php echo $ftd['broker']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
+            <div class="flex justify-center">
+                <button type="submit" name="update_ftd_submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">Update FTD</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

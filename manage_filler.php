@@ -3,7 +3,7 @@ session_start();
 include('config.php');
 
 // Check user role and redirect if not authorized
-if (!in_array($_SESSION['role'], ['super_admin', 'order_admin'])) {
+if (!in_array($_SESSION['role'], ['super_admin','filler_admin', 'order_admin'])) {
     header("Location: dashboard.php");
     exit();
 }

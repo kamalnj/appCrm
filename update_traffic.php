@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!in_array($_SESSION['role'], ['super_admin', 'order_admin', 'ftd_admin'])) {
+if (!in_array($_SESSION['role'], ['super_admin','filler_admin', 'order_admin', 'ftd_admin'])) {
     header("Location: dashboard.php");
     exit();
 }

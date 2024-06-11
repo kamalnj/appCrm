@@ -133,11 +133,11 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
                 </div>
                 <div>
                     <label for="dob" class="block text-sm font-medium text-gray-700">DOB:</label>
-                    <input type="date" id="dob" name="dob" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    <input type="date" id="dob" name="dob" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label for="address" class="block text-sm font-medium text-gray-700">Address:</label>
-                    <textarea id="address" name="address" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                    <input type="text" id="address" name="address" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label for="country" class="block text-sm font-medium text-gray-700">Country:</label>
@@ -145,7 +145,7 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
                 </div>
                 <div>
                     <label for="date_created" class="block text-sm font-medium text-gray-700">Date Created:</label>
-                    <input type="date" id="date_created" name="date_created" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    <input type="date" id="date_created" name="date_created" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label for="front_id" class="block text-sm font-medium text-gray-700">Front ID:</label>
@@ -165,7 +165,7 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
                 </div>
                 <div>
                     <label for="remark" class="block text-sm font-medium text-gray-700">Remark:</label>
-                    <textarea id="remark" name="remark" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"></textarea>
+                    <textarea id="remark" name="remark" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
                 </div>
                 <div>
                     <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture:</label>
@@ -184,40 +184,34 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
                     <input type="text" id="broker" name="broker" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                 </div>
             </div>
-            <div class="flex justify-center">
-                <button type="submit" name="add_ftd" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700">Add FTD</button>
+            <div class="text-center">
+                <button type="submit" name="add_ftd" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Add FTD</button>
             </div>
         </form>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white mt-6">
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">FTD Records</h2>
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
                 <thead class="bg-gray-800 text-white">
                     <tr>
-                        <th class="w-1/6 py-2">FID</th>
-                        <th class="w-1/6 py-2">Email</th>
-                        <th class="w-1/6 py-2">Phone Number</th>
-                        <th class="w-1/6 py-2">Country</th>
-                        <th class="w-1/6 py-2">Action</th>
+                        <th class="py-2 px-4 text-left">FID</th>
+                        <th class="py-2 px-4 text-left">Email</th>
+                        <th class="py-2 px-4 text-left">Date Created</th>
+                        <th class="py-2 px-4 text-left">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = mysqli_fetch_assoc($ftds)) { ?>
-                    <tr class="border-b">
-                        <td class="py-2"><?php echo $row['fid']; ?></td>
-                        <td class="py-2"><?php echo $row['email']; ?></td>
-                        <td class="py-2"><?php echo $row['phone_number']; ?></td>
-                        <td class="py-2"><?php echo $row['country']; ?></td>
-                        <td class="py-2">
-                            <div class="flex space-x-2">
-                            <button type="button" onclick="viewFTD('<?php echo $row['fid']; ?>')" class="bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-700">View</button>
-                            <form method="post" action="update_ftd.php">
-                                    <input type="hidden" name="ftd_id" value="<?php echo $row['fid']; ?>">
-                                    <button type="submit" class="bg-yellow-500 text-white px-2 py-1 rounded-md hover:bg-yellow-700">Update</button>
-                                </form>
-                                <form method="post">
-                                    <input type="hidden" name="ftd_id" value="<?php echo $row['fid']; ?>">
-                                    <button type="submit" name="delete_ftd" class="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-700">Delete</button>
-                                </form>
-                            </div>
+                    <?php while ($ftd = mysqli_fetch_assoc($ftds)) { ?>
+                    <tr>
+                        <td class="py-2 px-4"><?php echo $ftd['fid']; ?></td>
+                        <td class="py-2 px-4"><?php echo $ftd['email']; ?></td>
+                        <td class="py-2 px-4"><?php echo $ftd['date_created']; ?></td>
+                        <td class="py-2 px-4">
+                            <button class="view-ftd-btn inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" data-fid="<?php echo $ftd['fid']; ?>">View</button>
+                            <a href="update_ftd.php?id=<?php echo $ftd['fid']; ?>" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700">Edit</a>
+                            <form method="post" class="inline-block">
+                                <input type="hidden" name="ftd_id" value="<?php echo $ftd['fid']; ?>">
+                                <button type="submit" name="delete_ftd" class="inline-flex items-center px-2 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-500 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">Delete</button>
+                            </form>
                         </td>
                     </tr>
                     <?php } ?>
@@ -225,50 +219,57 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
             </table>
         </div>
     </div>
-    
-    <!-- Modal -->
-    <div id="viewModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
-    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">FTD Details</h3>
-                <div id="ftdDetails" class="space-y-2"></div>
+
+    <div id="viewModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75  items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4">FTD Details</h2>
+            <div id="ftdDetails">
+                <!-- FTD details will be populated here -->
             </div>
-            <div class="mt-5 sm:mt-6">
-                <button onclick="closeModal()" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">Close</button>
+            <div class="mt-4 text-right">
+                <button id="closeModal" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Close</button>
             </div>
         </div>
     </div>
-</div>
-
 
     <script>
-    function viewFTD(fid) {
-        fetch('get_ftd_details.php?fid=' + fid)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    let details = '';
-                    for (const [key, value] of Object.entries(data)) {
-                        details += `<div><strong>${key}:</strong> ${value}</div>`;
-                    }
-                    document.getElementById('ftdDetails').innerHTML = details;
-                    document.getElementById('viewModal').classList.remove('hidden');
-                }
-            })
-            .catch(error => console.error('Error fetching FTD details:', error));
-    }
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.view-ftd-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const fid = this.getAttribute('data-fid');
+                    fetch(`get_ftd_details.php?fid=${fid}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const detailsDiv = document.getElementById('ftdDetails');
+                            detailsDiv.innerHTML = `
+                                <p><strong>FID:</strong> ${data.fid}</p>
+                                <p><strong>Email:</strong> ${data.email}</p>
+                                <p><strong>Telegram:</strong> ${data.telegram}</p>
+                                <p><strong>WhatsApp:</strong> ${data.whatsapp}</p>
+                                <p><strong>Messenger:</strong> ${data.messenger}</p>
+                                <p><strong>DOB:</strong> ${data.dob}</p>
+                                <p><strong>Address:</strong> ${data.address}</p>
+                                <p><strong>Country:</strong> ${data.country}</p>
+                                <p><strong>Date Created:</strong> ${data.date_created}</p>
+                                <p><strong>Front ID:</strong> ${data.front_id}</p>
+                                <p><strong>Back ID:</strong> ${data.back_id}</p>
+                                <p><strong>Selfie Front:</strong> ${data.selfie_front}</p>
+                                <p><strong>Selfie Back:</strong> ${data.selfie_back}</p>
+                                <p><strong>Remark:</strong> ${data.remark}</p>
+                                <p><strong>Profile Picture:</strong> ${data.profile_picture}</p>
+                                <p><strong>Our Network:</strong> ${data.our_network}</p>
+                                <p><strong>Client Network:</strong> ${data.client_network}</p>
+                                <p><strong>Broker:</strong> ${data.broker}</p>
+                            `;
+                            document.getElementById('viewModal').classList.remove('hidden');
+                        });
+                });
+            });
 
-    function closeModal() {
-        document.getElementById('viewModal').classList.add('hidden');
-    }
-</script>
-
+            document.getElementById('closeModal').addEventListener('click', function () {
+                document.getElementById('viewModal').classList.add('hidden');
+            });
+        });
+    </script>
 </body>
 </html>
