@@ -1,41 +1,169 @@
+<?php
+session_start();
+if ($_SESSION['role'] != 'super_admin') {
+    header("Location: dashboard.php");
+    exit();
+}
+
+include('config.php');
+
+// Handle Add Operation
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_user'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password']; // No hashing here
+    $role = $_POST['role'];
+
+    $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $username, $password, $role);
+    $stmt->execute();
+    header("Location: add_admin.php");
+}
+
+// Handle Update Operation
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_user'])) {
+    $id = $_POST['id'];
+    $username = $_POST['username'];
+    $password = $_POST['password']; // No hashing here
+    $role = $_POST['role'];
+
+    $stmt = $conn->prepare("UPDATE users SET username=?, password=?, role=? WHERE id=?");
+    $stmt->bind_param("sssi", $username, $password, $role, $id);
+    $stmt->execute();
+    header("Location: add_admin.php");
+}
+
+// Handle Delete Operation
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
+    $id = $_POST['id'];
+    $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    header("Location: add_admin.php");
+}
+
+// Fetch User Records
+$user_records = $conn->query("SELECT * FROM users");
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add User</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/tw-elements.min.css" />
-    <script src="https://cdn.tailwindcss.com/3.3.0"></script>
+    <title>Manage Users</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <section class="bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">ADD ADMIN</h1>
-                    <form class="space-y-4 md:space-y-6" action="add_user.php" method="POST">
-                        <div>
-                            <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                            <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required="">
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4">Manage Users</h1>
+        <form method="post" class="mb-8 p-4 bg-white shadow-md rounded">
+            <h2 class="text-xl font-bold mb-4">Add User</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
+                    <select id="role" name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option value="super_admin">Super Admin</option>
+                        <option value="order_admin">Order Admin</option>
+                        <option value="filler_admin">Filler Admin</option>
+                        <option value="ftd_admin">FTD Admin</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" name="add_user" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Add User</button>
+        </form>
+
+        <h2 class="text-2xl font-bold mb-4">User List</h2>
+        <table class="min-w-full bg-white rounded-lg shadow-md">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b border-gray-200">ID</th>
+                    <th class="py-2 px-4 border-b border-gray-200">Username</th>
+                    <th class="py-2 px-4 border-b border-gray-200">Password</th>
+                    <th class="py-2 px-4 border-b border-gray-200">Role</th>
+                    <th class="py-2 px-4 border-b border-gray-200">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($record = $user_records->fetch_assoc()) { ?>
+                <tr>
+                    <td class="py-2 px-4 border-b border-gray-200"><?php echo $record['id']; ?></td>
+                    <td class="py-2 px-4 border-b border-gray-200"><?php echo $record['username']; ?></td>
+                    <td class="py-2 px-4 border-b border-gray-200"><?php echo $record['password']; ?></td>
+                    <td class="py-2 px-4 border-b border-gray-200"><?php echo $record['role']; ?></td>
+                    <td class="py-2 px-4 border-b border-gray-200">
+                        <form method="post" class="inline-block">
+                            <input type="hidden" name="id" value="<?php echo $record['id']; ?>">
+                            <button type="button" onclick="openUpdateModal(<?php echo $record['id']; ?>, '<?php echo $record['username']; ?>', '<?php echo $record['password']; ?>', '<?php echo $record['role']; ?>')" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-2 rounded">Update</button>
+                        </form>
+                        <form method="post" class="inline-block">
+                            <input type="hidden" name="id" value="<?php echo $record['id']; ?>">
+                            <button type="submit" name="delete_user" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+
+        <!-- Update Modal -->
+        <div id="updateModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <div>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Update User</h3>
+                        <div class="mt-2">
+                            <form method="post">
+                                <input type="hidden" id="update_id" name="id">
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label for="update_username" class="block text-sm font-medium text-gray-700">Username</label>
+                                        <input type="text" id="update_username" name="username" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="update_password" class="block text-sm font-medium text-gray-700">Password</label>
+                                        <input type="text" id="update_password" name="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="update_role" class="block text-sm font-medium text-gray-700">Role</label>
+                                        <select id="update_role" name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                                            <option value="super_admin">Super Admin</option>
+                                            <option value="order_admin">Order Admin</option>
+                                            <option value="filler_admin">Filler Admin</option>
+                                            <option value="ftd_admin">FTD Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" name="update_user" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Update User</button>
+                                <button type="button" onclick="closeUpdateModal()" class="mt-4 ml-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
+                            </form>
                         </div>
-                        <div>
-                            <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                            <input type="password" name="password" id="password" placeholder="" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
-                        </div>
-                        <div>
-                            <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                            <select id="role" name="role" required class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                <option value="order_admin">Order Admin</option>
-                                <option value="filler_admin">Filler Admin</option>
-                                <option value="ftd_admin">FTD Admin</option>
-                            </select>
-                        </div>
-                        <button type="submit" name="add_user" class="w-full text-white bg-primary-600 bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Add Admin</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+
+        <script>
+            function openUpdateModal(id, username, password, role) {
+                document.getElementById('update_id').value = id;
+                document.getElementById('update_username').value = username;
+                document.getElementById('update_password').value = password;
+                document.getElementById('update_role').value = role;
+                document.getElementById('updateModal').classList.remove('hidden');
+            }
+
+            function closeUpdateModal() {
+                document.getElementById('updateModal').classList.add('hidden');
+            }
+        </script>
+    </div>
 </body>
 </html>
