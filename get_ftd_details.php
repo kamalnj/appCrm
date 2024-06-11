@@ -1,5 +1,5 @@
 <?php
-include('config.php'); // include database connection
+include('config.php'); 
 
 if (isset($_GET['fid'])) {
     $fid = $_GET['fid'];

@@ -2,13 +2,11 @@
 session_start();
 include('config.php');
 
-// Check user role and redirect if not authorized
 if (!in_array($_SESSION['role'], ['super_admin','filler_admin', 'order_admin'])) {
     header("Location: dashboard.php");
     exit();
 }
 
-// Handle Add Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_filler'])) {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
@@ -26,17 +24,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_filler'])) {
     header("Location: manage_filler.php");
 }
 
-// Handle Update Operation
 
 
-// Handle Delete Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_filler'])) {
     $id = $_POST['filler_id'];
     mysqli_query($conn, "DELETE FROM filler WHERE id='$id'");
     header("Location: manage_filler.php");
 }
 
-// Fetch Fillers
 $fillers = mysqli_query($conn, "SELECT * FROM filler");
 
 ?>
@@ -98,27 +93,28 @@ $fillers = mysqli_query($conn, "SELECT * FROM filler");
         <tbody>
             <?php while ($filler = mysqli_fetch_assoc($fillers)) { ?>
                 <tr>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['id']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['first_name']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['last_name']; ?></td
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['email']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['phone_number']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['country']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['date_created']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['our_network']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['client_network']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['broker']; ?></td>
-                    <td class="border border-gray-200 px-4 py-2">
-                        <form method="post" action="update_filler.php">
-                            <input type="hidden" name="filler_id" value="<?php echo $filler['id']; ?>">
-                            <button type="submit" name="update_filler" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update</button>
-                        </form>
-                        <form method="post">
-                            <input type="hidden" name="filler_id" value="<?php echo $filler['id']; ?>">
-                            <button type="submit" name="delete_filler" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['id']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['first_name']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['last_name']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['email']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['phone_number']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['country']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['date_created']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['our_network']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['client_network']; ?></td>
+    <td class="border border-gray-200 px-4 py-2"><?php echo $filler['broker']; ?></td>
+    <td class="border border-gray-200 px-4 py-2">
+        <form method="post" action="update_filler.php">
+            <input type="hidden" name="filler_id" value="<?php echo $filler['id']; ?>">
+            <button type="submit" name="update_filler" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update</button>
+        </form>
+        <form method="post">
+            <input type="hidden" name="filler_id" value="<?php echo $filler['id']; ?>">
+            <button type="submit" name="delete_filler" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+        </form>
+    </td>
+</tr>
+
             <?php } ?>
         </tbody>
     </table>

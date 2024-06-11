@@ -7,7 +7,6 @@ if (!in_array($_SESSION['role'], ['super_admin', 'order_admin', 'ftd_admin'])) {
 
 include('config.php');
 
-// Handle Add Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $fid = $_POST['fid'];
     $email = $_POST['email'];
@@ -31,50 +30,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $client_network = $_POST['client_network'];
     $broker = $_POST['broker'];
 
-    // Prepare INSERT statement
     $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    // Bind parameters and execute
     $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
     $stmt->execute();
     header("Location: manage_ftd.php");
 }
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd'])) {
-    $fid = $_POST['fid'];
-    $email = $_POST['email'];
-    $email_password = $_POST['email_password'];
-    $extension = $_POST['extension'];
-    $phone_number = $_POST['phone_number'];
-    $whatsapp = $_POST['whatsapp'];
-    $viber = $_POST['viber'];
-    $messenger = $_POST['messenger'];
-    $dob = $_POST['dob'];
-    $address = $_POST['address'];
-    $country = $_POST['country'];
-    $date_created = $_POST['date_created'];
-    $front_id = $_POST['front_id'];
-    $back_id = $_POST['back_id'];
-    $selfie_front = $_POST['selfie_front'];
-    $selfie_back = $_POST['selfie_back'];
-    $remark = $_POST['remark'];
-    $profile_picture = $_POST['profile_picture'];
-    $our_network = $_POST['our_network'];
-    $client_network = $_POST['client_network'];
-    $broker = $_POST['broker'];
 
-    $stmt = $conn->prepare("UPDATE ftd SET email=?, email_password=?, extension=?, phone_number=?, whatsapp=?, viber=?, messenger=?, dob=?, address=?, country=?, date_created=?, front_id=?, back_id=?, selfie_front=?, selfie_back=?, remark=?, profile_picture=?, our_network=?, client_network=?, broker=? WHERE fid=?");
-    $stmt->bind_param("sssssssssssssssssssss", $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker, $fid);
-    $stmt->execute();
-    header("Location: manage_ftd.php");
-}
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ftd'])) {
-    // Code to delete FTD record
     $fid = $_POST['ftd_id'];
-    // Delete the FTD record from the database
     mysqli_query($conn, "DELETE FROM ftd WHERE fid='$fid'");
     header("Location: manage_ftd.php");
 }
 
-// Fetch FTDs
 $ftds = mysqli_query($conn, "SELECT * FROM ftd");
 ?>
 <!DOCTYPE html>
@@ -224,7 +191,6 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
         <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
             <h2 class="text-2xl font-bold mb-4">FTD Details</h2>
             <div id="ftdDetails">
-                <!-- FTD details will be populated here -->
             </div>
             <div class="mt-4 text-right">
                 <button id="closeModal" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Close</button>

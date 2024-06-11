@@ -7,7 +7,6 @@ if (!in_array($_SESSION['role'], ['super_admin', 'order_admin','filler_admin', '
 
 include('config.php');
 
-// Handle Add Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_traffic'])) {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
@@ -19,9 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_traffic'])) {
     $client_network = $_POST['client_network'];
     $broker = $_POST['broker'];
 
-    // Prepare INSERT statement
     $stmt = $conn->prepare("INSERT INTO traffic (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    // Bind parameters and execute
+
     $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
     $stmt->execute();
     header("Location: manage_traffic.php");
@@ -51,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_traffic'])) {
     header("Location: manage_traffic.php");
 }
 
-// Fetch Traffic Records
 $traffic_records = mysqli_query($conn, "SELECT * FROM traffic");
 ?>
 <!DOCTYPE html>

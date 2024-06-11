@@ -7,7 +7,6 @@ if ($_SESSION['role'] != 'super_admin') {
 
 include('config.php');
 
-// Handle Add Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_user'])) {
     $username = $_POST['username'];
     $password = $_POST['password']; // No hashing here
@@ -19,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_user'])) {
     header("Location: add_admin.php");
 }
 
-// Handle Update Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_user'])) {
     $id = $_POST['id'];
     $username = $_POST['username'];
@@ -32,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_user'])) {
     header("Location: add_admin.php");
 }
 
-// Handle Delete Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
     $id = $_POST['id'];
     $stmt = $conn->prepare("DELETE FROM users WHERE id=?");
@@ -41,7 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_user'])) {
     header("Location: add_admin.php");
 }
 
-// Fetch User Records
 $user_records = $conn->query("SELECT * FROM users");
 ?>
 <!DOCTYPE html>
@@ -110,7 +106,6 @@ $user_records = $conn->query("SELECT * FROM users");
             </tbody>
         </table>
 
-        <!-- Update Modal -->
         <div id="updateModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity" aria-hidden="true">

@@ -7,14 +7,12 @@ if (!in_array($_SESSION['role'], ['super_admin', 'order_admin','filler_admin','f
 
 include('config.php');
 
-// Fetch Filler Details
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_filler']) && isset($_POST['filler_id'])) {
     $filler_id = $_POST['filler_id'];
     $result = mysqli_query($conn, "SELECT * FROM filler WHERE id='$filler_id'");
     $filler = mysqli_fetch_assoc($result);
 }
 
-// Handle Update Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_filler_submit'])) {
     $filler_id = $_POST['filler_id'];
     $updated_fields = array();
@@ -63,10 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_filler_submit']
         $updated_fields[] = "broker='$broker'";
     }
     
-    // Construct the update query with the updated fields
     if (!empty($updated_fields)) {
         $update_query = "UPDATE filler SET " . implode(', ', $updated_fields) . " WHERE id={$_POST['filler_id']}";
-        // Assuming 'filler_id' is passed through a hidden input field in your form
         mysqli_query($conn, $update_query);
         // Redirect or handle success message
         header("Location: manage_filler.php");

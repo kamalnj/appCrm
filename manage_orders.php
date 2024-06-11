@@ -2,13 +2,11 @@
 session_start();
 include('config.php');
 
-// Check user role and redirect if not authorized
 if (!in_array($_SESSION['role'], ['super_admin', 'order_admin'])) {
     header("Location: dashboard.php");
     exit();
 }
 
-// Handle Add Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_order'])) {
     $order_date = $_POST['order_date'];
     $table_origin = $_POST['table_origin'];
@@ -29,17 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_order'])) {
     header("Location: manage_orders.php");
 }
 
-// Handle Update Operation
 
 
-// Handle Delete Operation
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_order'])) {
     $id = $_POST['order_id'];
     mysqli_query($conn, "DELETE FROM orders WHERE id='$id'");
     header("Location: manage_orders.php");
 }
 
-// Fetch Orders
 $orders = mysqli_query($conn, "SELECT * FROM orders");
 
 ?>
@@ -50,7 +45,6 @@ $orders = mysqli_query($conn, "SELECT * FROM orders");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Orders</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Add any necessary styles or scripts here -->
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
