@@ -35,6 +35,8 @@ if (mysqli_num_rows($result) > 0) {
         }
 
 
+        $orderinjection = "INSERT INTO orders_injection ( order_date,country,aff_manager_id,work_hours,our_network_today) VALUES ('" . $orderRow['order_date'] . "','" . $orderRow['country'] . "','" . $orderRow['aff_manager_id'] . "','" . $orderRow['work_hours'] . "','" . $orderRow['our_network_today'] . "')";
+        mysqli_query($conn, $orderinjection);
 
 
         $brandTableQuery = "INSERT INTO brand_table ( brand_name, aff_manager_id) VALUES ('" . $orderRow['brand_name'] . "', '" . $orderRow['aff_manager_id'] . "')";

@@ -11,9 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_filler']) && is
     $filler_id = $_POST['filler_id'];
     $result = mysqli_query($conn, "SELECT * FROM filler WHERE id='$filler_id'");
     $filler = mysqli_fetch_assoc($result);
-}else{
-    header('Location: manage_filler.php');
-    exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_filler_submit'])) {
