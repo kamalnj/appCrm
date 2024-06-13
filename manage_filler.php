@@ -16,12 +16,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $phone_number = $_POST['phone_number'];
         $country = $_POST['country'];
         $date_created = $_POST['date_created'];
-        $our_network = $_POST['our_network'];
-        $client_network = $_POST['client_network'];
+
+        // Set our_network and client_network to NULL
+        $our_network = NULL;
+        $client_network = NULL;
+
         $broker = $_POST['broker'];
 
-        $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
+        // Adjust the SQL statement to use NULL for our_network and client_network
+        $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?)");
+        $stmt->bind_param("sssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $broker);
         $stmt->execute();
         header("Location: manage_filler.php");
     } elseif(isset($_POST['delete_filler'])) {
@@ -34,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_FILES['csv_file']) && $_FILES['csv_file']['error'] == 0) {
             $file = $_FILES['csv_file']['tmp_name'];
             $handle = fopen($file, "r");
-
+        
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $first_name = $data[0];
                 $last_name = $data[1];
@@ -42,12 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $phone_number = $data[3];
                 $country = $data[4];
                 $date_created = $data[5];
-                $our_network = $data[6];
-                $client_network = $data[7];
+        
+                // Set our_network and client_network to NULL
+                $our_network = NULL;
+                $client_network = NULL;
+        
                 $broker = $data[8];
-
-                $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
+        
+                // Adjust the SQL statement to use NULL for our_network and client_network
+                $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?)");
+                $stmt->bind_param("sssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $broker);
                 $stmt->execute();
             }
             fclose($handle);

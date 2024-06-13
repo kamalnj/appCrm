@@ -30,19 +30,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_csv'])) {
             $selfie_back = $data[15];
             $remark = $data[16];
             $profile_picture = $data[17];
-            $our_network = $data[18];
-            $client_network = $data[19];
+            
+            // Set these columns to NULL
+            $our_network = NULL;
+            $client_network = NULL;
+            
             $broker = $data[20];
             
             $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
-            $stmt->execute();
+            
+            // Adjust binding parameters to handle NULL values
+            if ($stmt) {
+                $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
+                $stmt->execute();
+            }
         }
         fclose($handle);
         header("Location: manage_ftd.php");
     }
 }
-
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $fid = $_POST['fid'];
@@ -63,8 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $selfie_back = $_POST['selfie_back'];
     $remark = $_POST['remark'];
     $profile_picture = $_POST['profile_picture'];
-    $our_network = $_POST['our_network'];
-    $client_network = $_POST['client_network'];
+    
+    // Set our_network and client_network to NULL
+    $our_network = NULL;
+    $client_network = NULL;
+    
     $broker = $_POST['broker'];
 
     // Check for duplicate fid
@@ -77,8 +86,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
         echo "Error: Duplicate FID detected. Please use a unique FID.";
     } else {
         // Proceed with insertion
-        $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
+        $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, ?)");
+        $stmt->bind_param("sssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $broker);
         $stmt->execute();
         header("Location: manage_ftd.php");
     }
@@ -86,7 +95,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ftd'])) {
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ftd'])) {  
     $fid = $_POST['ftd_id'];
     mysqli_query($conn, "DELETE FROM ftd WHERE fid='$fid'");
     header("Location: manage_ftd.php");
