@@ -45,9 +45,15 @@ $user_records = $conn->query("SELECT * FROM users");
 <head>
     <title>Manage Users</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        input, select {
+            padding: 8px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
+        <a href="dashboard.php"><button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Back To Dashboard</button></a> <br><br>
         <h1 class="text-3xl font-bold mb-4">Manage Users</h1>
         <form method="post" class="mb-8 p-4 bg-white shadow-md rounded">
             <h2 class="text-xl font-bold mb-4">Add User</h2>
@@ -63,7 +69,7 @@ $user_records = $conn->query("SELECT * FROM users");
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700">Role</label>
                     <select id="role" name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                        <option value="super_admin">Super Admin</option>
+                        <option value="affiliate_manager">Affiliate Manager</option>
                         <option value="order_admin">Order Admin</option>
                         <option value="filler_admin">Filler Admin</option>
                         <option value="ftd_admin">FTD Admin</option>
@@ -130,7 +136,7 @@ $user_records = $conn->query("SELECT * FROM users");
                                     <div>
                                         <label for="update_role" class="block text-sm font-medium text-gray-700">Role</label>
                                         <select id="update_role" name="role" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                                            <option value="super_admin">Super Admin</option>
+                                            <option value="affiliate_manager">Affiliate Admin</option>
                                             <option value="order_admin">Order Admin</option>
                                             <option value="filler_admin">Filler Admin</option>
                                             <option value="ftd_admin">FTD Admin</option>

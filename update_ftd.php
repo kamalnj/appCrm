@@ -37,6 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_ftd_submit'])) 
     header("Location: manage_ftd.php");
 }
 
+if(!isset($_GET['id'])) {
+    header('Location: manage_ftd.php');
+    exit();
+}
+
 $fid = $_GET['id'];
 $ftd_result = mysqli_query($conn, "SELECT * FROM ftd WHERE fid='$fid'");
 $ftd = mysqli_fetch_assoc($ftd_result);
@@ -48,6 +53,11 @@ $ftd = mysqli_fetch_assoc($ftd_result);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update FTD</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        input, textarea {
+            width: 500px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container px-6 mx-auto py-8">
@@ -88,7 +98,7 @@ $ftd = mysqli_fetch_assoc($ftd_result);
             <input type="date" id="dob" name="dob" value="<?php echo $ftd['dob']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="address" class="block">Address:</label>
-            <textarea id="address" name="address" rows="3" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"><?php echo $ftd['address']; ?></textarea>
+            <input id="address" name="address" value="<?php echo $ftd['address']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="country" class="block">Country:</label>
             <input type="text" id="country" name="country" value="<?php echo $ftd['country']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
@@ -109,7 +119,7 @@ $ftd = mysqli_fetch_assoc($ftd_result);
             <input type="text" id="selfie_back" name="selfie_back" value="<?php echo $ftd['selfie_back']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
             <label for="remark" class="block">Remark:</label>
-            <textarea id="remark" name="remark" rows="3" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"><?php echo $ftd['remark']; ?></textarea>
+            <textarea id="remark" name="remark" rows="5" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"><?php echo $ftd['remark']; ?></textarea>
 
             <label for="profile_picture" class="block">Profile Picture:</label>
             <input type="text" id="profile_picture" name="profile_picture" value="<?php echo $ftd['profile_picture']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
@@ -123,8 +133,10 @@ $ftd = mysqli_fetch_assoc($ftd_result);
             <label for="broker" class="block">Broker:</label>
             <input type="text" id="broker" name="broker" value="<?php echo $ftd['broker']; ?>" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
 
-            <div class="flex justify-center">
+            <div class="">
                 <button type="submit" name="update_ftd_submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">Update FTD</button>
+                <br><br>
+                <a href="manage_ftd.php" style="color: blue">Cancel</a> <br><br>
             </div>
         </form>
     </div>

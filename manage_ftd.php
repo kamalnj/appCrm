@@ -6,6 +6,43 @@ if (!in_array($_SESSION['role'], ['super_admin', 'order_admin', 'ftd_admin'])) {
 }
 
 include('config.php');
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['upload_csv'])) {
+    if (isset($_FILES['csv_file']) && $_FILES['csv_file']['error'] == 0) {
+        $file = $_FILES['csv_file']['tmp_name'];
+        $handle = fopen($file, "r");
+        
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            $fid = $data[0];
+            $email = $data[1];
+            $email_password = $data[2];
+            $extension = $data[3];
+            $phone_number = $data[4];
+            $whatsapp = $data[5];
+            $viber = $data[6];
+            $messenger = $data[7];
+            $dob = $data[8];
+            $address = $data[9];
+            $country = $data[10];
+            $date_created = $data[11];
+            $front_id = $data[12];
+            $back_id = $data[13];
+            $selfie_front = $data[14];
+            $selfie_back = $data[15];
+            $remark = $data[16];
+            $profile_picture = $data[17];
+            $our_network = $data[18];
+            $client_network = $data[19];
+            $broker = $data[20];
+            
+            $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
+            $stmt->execute();
+        }
+        fclose($handle);
+        header("Location: manage_ftd.php");
+    }
+}
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $fid = $_POST['fid'];
@@ -30,11 +67,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_ftd'])) {
     $client_network = $_POST['client_network'];
     $broker = $_POST['broker'];
 
-    $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
-    $stmt->execute();
-    header("Location: manage_ftd.php");
+    // Check for duplicate fid
+    $check_stmt = $conn->prepare("SELECT fid FROM ftd WHERE fid = ?");
+    $check_stmt->bind_param("s", $fid);
+    $check_stmt->execute();
+    $check_stmt->store_result();
+    if ($check_stmt->num_rows > 0) {
+        // Handle duplicate fid case
+        echo "Error: Duplicate FID detected. Please use a unique FID.";
+    } else {
+        // Proceed with insertion
+        $stmt = $conn->prepare("INSERT INTO ftd (fid, email, email_password, extension, phone_number, whatsapp, viber, messenger, dob, address, country, date_created, front_id, back_id, selfie_front, selfie_back, remark, profile_picture, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssssssssssssssss", $fid, $email, $email_password, $extension, $phone_number, $whatsapp, $viber, $messenger, $dob, $address, $country, $date_created, $front_id, $back_id, $selfie_front, $selfie_back, $remark, $profile_picture, $our_network, $client_network, $broker);
+        $stmt->execute();
+        header("Location: manage_ftd.php");
+    }
+    $check_stmt->close();
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_ftd'])) {
     $fid = $_POST['ftd_id'];
@@ -51,10 +101,27 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage FTD</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        input{
+            padding: 8px;
+        }
+        div#viewModal div.shadow-lg {
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container px-6 mx-auto py-8">
+        <a href="dashboard.php"><button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Back To Dashboard</button></a> <br><br>
         <h1 class="text-3xl text-center font-bold mb-4">Manage FTD</h1>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+    <div class="mb-4">
+        <label for="csv_file" class="block text-sm font-medium text-gray-700">Upload CSV:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+    </div>
+    <button type="submit" name="upload_csv" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Upload CSV</button>
+</form>
         <form method="post" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -132,7 +199,7 @@ $ftds = mysqli_query($conn, "SELECT * FROM ftd");
                 </div>
                 <div>
                     <label for="remark" class="block text-sm font-medium text-gray-700">Remark:</label>
-                    <textarea id="remark" name="remark" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                    <textarea id="remark" name="remark" rows="5" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
                 </div>
                 <div>
                     <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture:</label>

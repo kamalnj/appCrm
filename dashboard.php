@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('config.php');
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -8,6 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 $cookie_name = "user_auth";
 $cookie_value = "authenticated";
 setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // Cookie set to expire in 30 days
+
+
 
 $role = $_SESSION['role'];
 ?>
@@ -38,16 +41,21 @@ $role = $_SESSION['role'];
                 <a href="manage_traffic.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage Traffic</a>
             <?php } elseif ($role == 'ftd_admin') { ?>
                 <a href="manage_ftd.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage FTD</a>
+            <?php } elseif ($role == 'affiliate_manager') { ?>
+                <a href="manager_order.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage orders</a>
+                <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Orders History</a>
+                <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Wallet</a>
+
             <?php } ?>
             <a href="logout.php" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg">Logout</a>
         </div>
     </div>
     <script>
         if (document.cookie.split(';').some((item) => item.trim().startsWith('user_auth='))) {
-    console.log("Cookie is set");
-} else {
-    console.log("Cookie not set");
-}
+            console.log("Cookie is set");
+        } else {
+            console.log("Cookie not set");
+        }
     </script>
 </body>
 </html>

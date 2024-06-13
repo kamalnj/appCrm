@@ -7,29 +7,53 @@ if (!in_array($_SESSION['role'], ['super_admin','filler_admin', 'order_admin']))
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_filler'])) {
-    $first_name = $_POST['first_name'];
-    $last_name = $_POST['last_name'];
-    $email = $_POST['email'];
-    $phone_number = $_POST['phone_number'];
-    $country = $_POST['country'];
-    $date_created = $_POST['date_created'];
-    $our_network = $_POST['our_network'];
-    $client_network = $_POST['client_network'];
-    $broker = $_POST['broker'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if(isset($_POST['add_filler'])) {
+        // Logic for adding filler from form
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $email = $_POST['email'];
+        $phone_number = $_POST['phone_number'];
+        $country = $_POST['country'];
+        $date_created = $_POST['date_created'];
+        $our_network = $_POST['our_network'];
+        $client_network = $_POST['client_network'];
+        $broker = $_POST['broker'];
 
-    $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
-    $stmt->execute();
-    header("Location: manage_filler.php");
-}
+        $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
+        $stmt->execute();
+        header("Location: manage_filler.php");
+    } elseif(isset($_POST['delete_filler'])) {
+        // Logic for deleting filler
+        $id = $_POST['filler_id'];
+        mysqli_query($conn, "DELETE FROM filler WHERE id='$id'");
+        header("Location: manage_filler.php");
+    } elseif(isset($_POST['upload_csv'])) {
+        // Logic for uploading CSV file
+        if (isset($_FILES['csv_file']) && $_FILES['csv_file']['error'] == 0) {
+            $file = $_FILES['csv_file']['tmp_name'];
+            $handle = fopen($file, "r");
 
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $first_name = $data[0];
+                $last_name = $data[1];
+                $email = $data[2];
+                $phone_number = $data[3];
+                $country = $data[4];
+                $date_created = $data[5];
+                $our_network = $data[6];
+                $client_network = $data[7];
+                $broker = $data[8];
 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_filler'])) {
-    $id = $_POST['filler_id'];
-    mysqli_query($conn, "DELETE FROM filler WHERE id='$id'");
-    header("Location: manage_filler.php");
+                $stmt = $conn->prepare("INSERT INTO filler (first_name, last_name, email, phone_number, country, date_created, our_network, client_network, broker) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssssssss", $first_name, $last_name, $email, $phone_number, $country, $date_created, $our_network, $client_network, $broker);
+                $stmt->execute();
+            }
+            fclose($handle);
+            header("Location: manage_filler.php");
+        }
+    }
 }
 
 $fillers = mysqli_query($conn, "SELECT * FROM filler");
@@ -40,9 +64,26 @@ $fillers = mysqli_query($conn, "SELECT * FROM filler");
 <head>
     <title>Manage Fillers</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.7/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        input, textarea {
+            width: 500px;
+        }
+        button[name="add_filler"] {
+            display: block;
+        }
+        button[name="update_filler"] {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 py-8 px-4">
+    <a href="dashboard.php"><button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Back To Dashboard</button></a> <br><br>
     <h1 class="text-2xl font-bold mb-4">Manage Fillers</h1>
+    <form method="post" class="mt-8" enctype="multipart/form-data">
+        <label for="csv_file" class="block">Upload CSV File:</label>
+        <input type="file" id="csv_file" name="csv_file" accept=".csv" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+        <button type="submit" name="upload_csv" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md mt-2">Upload CSV</button>
+    </form>
     <form method="post" class="space-y-4">
         <label for="first_name" class="block">First Name:</label>
         <input type="text" id="first_name" name="first_name" required class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
@@ -118,7 +159,6 @@ $fillers = mysqli_query($conn, "SELECT * FROM filler");
             <?php } ?>
         </tbody>
     </table>
-    <a href="dashboard.php" class="text-blue-600 hover:text-blue-700 block mt-4">Back to Dashboard</a>
 </body>
 </html>
 

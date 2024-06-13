@@ -58,9 +58,15 @@ $traffic_records = mysqli_query($conn, "SELECT * FROM traffic");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Traffic Records</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        button[name="update_traffic"] {
+            display: block;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
+        <a href="dashboard.php"><button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg">Back To Dashboard</button></a> <br><br>
         <h1 class="text-2xl font-bold mb-4">Manage Traffic Records</h1>
         <form method="post" class="bg-white p-6 rounded-lg shadow-md mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -147,7 +153,6 @@ $traffic_records = mysqli_query($conn, "SELECT * FROM traffic");
                 <?php } ?>
             </tbody>
         </table>
-        <a href="dashboard.php" class="block mt-4 text-blue-500">Back to Dashboard</a>
     </div>
 </body>
 </html>

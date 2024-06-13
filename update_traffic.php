@@ -12,6 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_traffic']) && i
     $traffic_id = $_POST['traffic_id'];
     $result = mysqli_query($conn, "SELECT * FROM traffic WHERE id='$traffic_id'");
     $traffic = mysqli_fetch_assoc($result);
+}else{
+    header('Location: manage_traffic.php');
+    exit();
 }
 
 // Handle Update Operation
