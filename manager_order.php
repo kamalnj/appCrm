@@ -167,7 +167,7 @@ if (isset($_POST['search_brand']) && !empty($_POST['selected_brand'])) {
                         <td class="border border-gray-300 px-4 py-2"><?php echo $order['ftds']; ?></td>
                         <td class="border border-gray-300 px-4 py-2"><?php echo $order['aff_manager_id']; ?></td>
                         <td class="border border-gray-300 px-4 py-2">
-                            <form method="post" action="update_orders.php"> <!-- Point to the update page -->
+                            <form method="post" action="manager_update.php"> <!-- Point to the update page -->
                                 <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
                                 <button type="submit" name="update_order" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-lg mr-2">Update</button>
                             </form>
