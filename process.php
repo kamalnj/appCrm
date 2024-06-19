@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect("localhost", "root", "", "upwork4");
+$conn = mysqli_connect("localhost", "projectslab_projet", "projectslab_projet", "projectslab_projet");
 
 $query = "SELECT * FROM orders WHERE approval = 'Yes'";
 $result = mysqli_query($conn, $query);

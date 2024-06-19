@@ -31,6 +31,7 @@ $role = $_SESSION['role'];
                 <a href="manage_ftd.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage FTD</a>
                 <a href="manage_filler.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage Filler</a>
                 <a href="manage_traffic.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage Traffic</a>
+                <a href="settings.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Settings</a>
             <?php } elseif ($role == 'order_admin') { ?>
                 <a href="manage_orders.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage Orders</a>
                 <a href="manage_ftd.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Manage FTD</a>

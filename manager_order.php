@@ -12,7 +12,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_order'])) {
     $order_date = $_POST['order_date'];
     $country = $_POST['country'];
     $for_day = $_POST['for_day'];
-    $work_hours = $_POST['work_hours'];
+    $start_time = $_POST['start_time'];
+    $end_time = $_POST['end_time'];
+    $work_hours = $start_time . ' - ' . $end_time . ' (GMT +3)';
     $our_network_today = $_POST['our_network_today'];
     $approval = $_POST['approval'];
     $type_order = $_POST['type_order'];
@@ -37,6 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_order'])) {
 
 $brand_names_query = mysqli_query($conn, "SELECT DISTINCT brand_name FROM orders WHERE aff_manager_id='$current_manager_id'");
 $brand_names = mysqli_fetch_all($brand_names_query, MYSQLI_ASSOC);
+
+$brand_names_quer = mysqli_query($conn, "SELECT DISTINCT name_brand FROM list_brand_name");
+$name_brand = mysqli_fetch_all($brand_names_quer, MYSQLI_ASSOC);
+
+$type_orders_query = mysqli_query($conn, "SELECT DISTINCT name_type FROM list_type_order");
+$type_orders = mysqli_fetch_all($type_orders_query, MYSQLI_ASSOC);
+
+$network_names_query = mysqli_query($conn, "SELECT DISTINCT name_network FROM list_network");
+$network_names = mysqli_fetch_all($network_names_query, MYSQLI_ASSOC);
 
 // Check if a brand name is selected
 if (isset($_POST['search_brand']) && !empty($_POST['selected_brand'])) {
@@ -75,20 +86,49 @@ if (isset($_POST['search_brand']) && !empty($_POST['selected_brand'])) {
                 </div>
                 <div>
                     <label for="country" class="block">Country:</label>
-                    <input type="text" id="country" name="country" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                    <select id="country" name="country" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                        <option value="Australia">Australia</option>
+                        <option value="Canada">Canada</option>
+                        <option value="United Kingdom">United Kingdom</option>
+                        <option value="Sweden">Sweden</option>
+                        <option value="Spain">Spain</option>
+                    </select>
                 </div>
                 <div>
                     <label for="for_day" class="block">For Day:</label>
                     <input type="date" id="for_day" name="for_day" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
                 </div>
                 <div>
-                    <label for="work_hours" class="block">Work Hours:</label>
-                    <input type="text" id="work_hours" name="work_hours" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                    <label for="start_time" class="block">Start Time (GMT +3):</label>
+                    <select id="start_time" name="start_time" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                        <?php
+                        for ($i = 0; $i < 24; $i++) {
+                            $hour = str_pad($i, 2, '0', STR_PAD_LEFT);
+                            echo "<option value='$hour:00'>$hour:00</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
                 <div>
-                    <label for="our_network_today" class="block">Our Network Today:</label>
-                    <input type="text" id="our_network_today" name="our_network_today" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                    <label for="end_time" class="block">End Time (GMT +3):</label>
+                    <select id="end_time" name="end_time" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                        <?php
+                        for ($i = 0; $i < 24; $i++) {
+                            $hour = str_pad($i, 2, '0', STR_PAD_LEFT);
+                            echo "<option value='$hour:00'>$hour:00</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
+                <div>
+                    <label for="network_name" class="block">Our network today:</label>
+                    <select id="network_name" name="our_network_today" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                        <?php foreach ($network_names as $network) : ?>
+                            <option value="<?= $network['name_network'] ?>"><?= $network['name_network'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div <?php if ($_SESSION['role'] == 'affiliate_manager') : ?> <input type="hidden" name="approval" value="Waiting">
+            <?php else : ?>
                 <div>
                     <label for="approval" class="block">Approval:</label>
                     <select id="approval" name="approval" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
@@ -97,26 +137,36 @@ if (isset($_POST['search_brand']) && !empty($_POST['selected_brand'])) {
                         <option value="Waiting">Waiting</option>
                     </select>
                 </div>
-                <div>
-                    <label for="type_order" class="block">Type Order:</label>
-                    <input type="text" id="type_order" name="type_order" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
-                </div>
-                <div>
-                    <label for="brand_name" class="block">Brand Name:</label>
-                    <input type="text" id="brand_name" name="brand_name" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
-                </div>
-                <div>
-                    <label for="capps" class="block">Capps:</label>
-                    <input type="text" id="capps" name="capps" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
-                </div>
-                <div>
-                    <label for="ftds" class="block">Ftds:</label>
-                    <input type="number" id="ftds" name="ftds" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
-                </div>
+            <?php endif; ?>
+            <div>
+                <label for="type_order" class="block">Type Order:</label>
+                <select id="type_order" name="type_order" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                    <?php foreach ($type_orders as $type_order) : ?>
+                        <option value="<?= $type_order['name_type'] ?>"><?= $type_order['name_type'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="brand_name" class="block">Brand Name:</label>
+                <select id="brand_name" name="brand_name" required class="border border-gray-300 rounded-md px-3 py-2 w-full">
+                    <?php foreach ($name_brand as $brand) : ?>
+                        <option value="<?= $brand['name_brand'] ?>"><?= $brand['name_brand'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label for="capps" class="block">Capps (5 to 1000):</label>
+                <input type="number" id="capps" name="capps" required class="border border-gray-300 rounded-md px-3 py-2 w-full" min="5" max="1000">
+            </div>
+            <div>
+                <label for="ftds" class="block">Ftds (1 to 250):</label>
+                <input type="number" id="ftds" name="ftds" required class="border border-gray-300 rounded-md px-3 py-2 w-full" min="1" max="250">
+            </div>
+
             </div>
             <button type="submit" name="add_order" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mt-4">Add Order</button>
         </form>
-        
+
         <form method="post" class="mb-8">
             <div>
                 <label for="selected_brand" class="block">Select Brand Name:</label>
@@ -167,7 +217,7 @@ if (isset($_POST['search_brand']) && !empty($_POST['selected_brand'])) {
                         <td class="border border-gray-300 px-4 py-2"><?php echo $order['ftds']; ?></td>
                         <td class="border border-gray-300 px-4 py-2"><?php echo $order['aff_manager_id']; ?></td>
                         <td class="border border-gray-300 px-4 py-2">
-                            <form method="post" action="manager_update.php"> <!-- Point to the update page -->
+                            <form method="post" action="update_orders.php"> <!-- Point to the update page -->
                                 <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
                                 <button type="submit" name="update_order" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-lg mr-2">Update</button>
                             </form>
